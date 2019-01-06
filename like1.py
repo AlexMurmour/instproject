@@ -1,21 +1,19 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from time import sleep  # strftime
+from time import sleep  
 from random import randint
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import conf
 
-tag = -1
 follows = 0
 likes = 0
 comments = 0
 pic_hrefs = []
 
-hashtags = ['fairytail', 'hunterxhunter', 'sailormoon']
+hashtags = ['beauty', 'naruto', 'sailormoon']
 driver = webdriver.Firefox()
-
 
 def login():
     sleep(2)
@@ -29,7 +27,8 @@ def login():
     password.send_keys(Keys.RETURN)
     sleep(3)
 
-    notnow = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "aOOlW.HoLwm")))
+    notnow = WebDriverWait(driver, 10).until(
+        expected_conditions.presence_of_element_located((By.CLASS_NAME, "aOOlW.HoLwm")))
     notnow.click()
 
 
@@ -43,7 +42,7 @@ def create_pic_list():
                 driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                 sleep(1)
                 hrefs_in_view = driver.find_elements_by_tag_name('a')
-                # finding relevant hrefs
+                # finding hrefs
                 hrefs_in_view = [unit.get_attribute('href') for unit in hrefs_in_view
                                  if '.com/p/' in unit.get_attribute('href')]
                 [pic_hrefs.append(href) for href in hrefs_in_view if href not in pic_hrefs]
@@ -55,9 +54,12 @@ def create_pic_list():
 
 
 def like():
+    global likes
     sleep(randint(2, 4))
     driver.find_element_by_xpath('//span[@aria-label="Нравится"]').click()
     sleep(1)
+    likes += 1
+    return likes
 
 
 def follow(user):
@@ -72,10 +74,12 @@ def follow(user):
         print('добавлен ' + user)  # user make str not int
     if sluch < 5:
         sleep(1)
+    return follows
 
 
 
 def comment():
+    global comments
     comm_prob = randint(1, 10)
     if comm_prob > 7:
         driver.find_element_by_xpath('//textarea[@placeholder = "Добавьте комментарий..."]').click()
@@ -96,16 +100,15 @@ def comment():
             sleep(1)
         # Enter to post comment
         comment_box.send_keys(Keys.ENTER)
+        comments += 1
         sleep(randint(22, 28))
     return comments
 
 
 def main():
     login()
-    global likes
-    global follows
-    global comments
-    for href in create_pic_list():
+    create_pic_list()
+    for href in pic_hrefs:
         try:
             driver.get(href)
             sleep(3)
@@ -116,15 +119,12 @@ def main():
             elif user not in open('users.txt'):
                 if likes < 700:
                     like()
-                    likes += 1
                 if follows < 50:
                     follow(user)
-                    print('follows: ' + "follows")
+                    print('follows: ' + str(follows))
                 if comments < 80:
                     comment()
-                    comments += 1
-                    print('comments: ' + comments)
-
+                    print('comments: ' + str(comments))
         except Exception as e:
             print(e)
             sleep(2)
@@ -133,3 +133,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
