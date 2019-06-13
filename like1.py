@@ -64,15 +64,15 @@ def like():
 
 def follow(user):
     global follows
-    sluch = randint(1, 10)
-    if sluch > 5:
+    case = randint(1, 10)
+    if case > 5:
         driver.find_element_by_xpath(
             "//button[contains(text(), 'Подписаться')]").click()
         sleep(1)
         open('users.txt', 'a').write(", " + user)
         follows += 1
         print('добавлен ' + user)  # user make str not int
-    if sluch < 5:
+    if case < 5:
         sleep(1)
     return follows
 
@@ -80,22 +80,22 @@ def follow(user):
 
 def comment():
     global comments
-    comm_prob = randint(1, 10)
-    if comm_prob > 7:
+    comm = randint(1, 10)
+    if comm > 7:
         driver.find_element_by_xpath('//textarea[@placeholder = "Добавьте комментарий..."]').click()
         comment_box = driver.find_element_by_xpath(
             '//textarea[@placeholder = "Добавьте комментарий..."]')
 
-        if (comm_prob < 7):
+        if (comm < 7):
             comment_box.send_keys('Really cool!')
             sleep(1)
-        elif (comm_prob > 6) and (comm_prob < 9):
+        elif (comm > 6) and (comm < 9):
             comment_box.send_keys('Nice work :)')
             sleep(1)
-        elif comm_prob == 9:
+        elif comm == 9:
             comment_box.send_keys('Nice gallery!!')
             sleep(1)
-        elif comm_prob == 10:
+        elif comm == 10:
             comment_box.send_keys('So cool! :)')
             sleep(1)
         # Enter to post comment
